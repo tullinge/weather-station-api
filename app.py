@@ -1,7 +1,7 @@
-from flask import Flask, request, jsonify
-
+from flask import Flask, request, jsonify, render_template
 from pymongo import MongoClient
 import datetime
+import socket
 
 
 Client = MongoClient("Localhost", 27017)
@@ -13,32 +13,59 @@ app = Flask(__name__)
 
 @app.route("/")
 def index():
-    return "<h1> Home Page </h1>"
+    host_ip = socket.gethostbyname(socket.gethostname())
+    return render_template("index.html", host_ip=host_ip,)
 
 
-@app.route("/insert", methods=["POST", "GET"])
+@app.route("/measurements", methods=["POST"])
 def inserting():
+
+    date_init = datetime.datetime.utcnow()
+    date_subt = datetime.timedelta(hours=1)
+    date_ins = date_init + date_subt
 
     coll.insert_one(
         {
-            "temperature": request.json["temperature"],
-            "Humidity": request.json["Humidity"],
-            "Altitude": request.json["Altitude"],
-            "Pressure": request.json["Pressure"],
+            "Temperature": request.json["Temp"],
+            "Humidity": request.json["Hum"],
+            # "Altitude": request.json["Alt"]
+            "Pressure": request.json["Press"],
             "CO2": request.json["CO2"],
             "TVOC": request.json["TVOC"],
-            "Timestamp": datetime.datetime.utcnow(),
+            "Rain": request.json["Rain"],
+            "Wind": request.json["Wind"],
+            "Date": str(date_ins.date()),
+            "Time": str(date_ins.time()),
         }
     )
     return jsonify("Response")
 
 
-@app.route("/test", methods=["POST", "GET"])
+@app.route("/test", methods=["POST"])
 def testing():
-    coll.insert_one({"temp": request.json["temp"]})
+    date_init = datetime.datetime.utcnow()
+    date_subt = datetime.timedelta(hours=1)
+    date_ins = date_init + date_subt
+    coll.insert_one(
+        {
+            "Temp": request.json["temp"],
+            "Date": str(date_ins.date()),
+            "Time": str(date_ins.time()),
+        }
+    )
     return jsonify("Response")
 
 
-if __name__ == "__main__":
-    app.run(host="192.168.10.127", debug=True)
+@app.route("/find", methods=["GET"])
+def finding():
+    date_ins = request.args["date"]
+    output = []
 
+    for joe in coll.find({"Date": date_ins}).sort("Date", -1):
+        output.append(joe)
+
+    return render_template("find.html", title="Sensor DB list", paragraph=output)
+
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", debug=True, port=69)
