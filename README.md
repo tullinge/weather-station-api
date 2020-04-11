@@ -14,7 +14,7 @@ pip install -r requirements.txt
 
 
 
-To use the API you simply locate the istallation folder and Execute the weather station API script with a terminal (linux) or powershell:
+To use the API you simply locate the installation folder and execute the weather station API script with a terminal (linux) or powershell (windows):
 ```
 python app.py
 ```
