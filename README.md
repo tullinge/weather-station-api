@@ -1,4 +1,4 @@
-# Weather API
+# Weather Station API
 ## Requirements
 
 - Python3
