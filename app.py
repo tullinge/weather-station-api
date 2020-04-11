@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify, render_template
 from pymongo import MongoClient
+from requests import get
 import datetime
 import socket
 
@@ -14,7 +15,8 @@ app = Flask(__name__)
 @app.route("/")
 def index():
     host_ip = socket.gethostbyname(socket.gethostname())
-    return render_template("index.html", host_ip=host_ip,)
+    network_ip = get("https://api.ipify.org").text
+    return render_template("index.html", host_ip=host_ip, ip=network_ip)
 
 
 @app.route("/measurements", methods=["POST"])
@@ -38,7 +40,7 @@ def inserting():
             "Time": str(date_ins.time()),
         }
     )
-    return jsonify("Response")
+    return jsonify("OK")
 
 
 @app.route("/test", methods=["POST"])
