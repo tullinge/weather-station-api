@@ -5,12 +5,16 @@
     <body>
         <h3>Sensor DB Homepage</h3>
         <p>Använd "http://{{ host_ip }}:69/measurements?date=yyyy-mm-dd" för att hitta
-            sensorvärden<br />
+            sensorvärden. <br>
+
+            Ex: http://{{ host_ip }}:69/measurements?date=2020-04-16
+            <br /><br />
             Använd "http://{{ host_ip }}:69/measurements" med insomnia med exempel som:
             { "Temp" : "24", "Hum" : "32", "Press" : "103409", "CO2" : "686", "TVOC" : "43", "Rain" :
-            "false", "Wind" : "0"} för att testa REST API <br /><br />
+            "false", "Wind" : "0"} för att testa REST APIen
+            <br /><br />
             (IP-adressen gäller om du är på samma nätverk annars använd: {{ ip }})</br>
-            detta kräver dock att man öppnar en port
+            (detta kräver dock att man öppnar en port)
         </p>
 
     </body>

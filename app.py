@@ -3,6 +3,7 @@ from pymongo import MongoClient
 from requests import get
 import datetime
 import socket
+import pytz
 
 
 Client = MongoClient("Localhost", 27017)
@@ -22,9 +23,7 @@ def index():
 @app.route("/measurements", methods=["POST"])
 def inserting():
 
-    date_init = datetime.datetime.utcnow()
-    date_subt = datetime.timedelta(hours=1)
-    date_ins = date_init + date_subt
+    dt_swe = datetime.datetime.now(tz=pytz.timezone("Europe/Stockholm"))
 
     coll.insert_one(
         {
@@ -35,8 +34,8 @@ def inserting():
             "TVOC": request.json["TVOC"],
             "Rain": request.json["Rain"],
             "Wind": request.json["Wind"],
-            "Date": str(date_ins.date()),
-            "Time": str(date_ins.time()),
+            "Date": str(dt_swe.date()),
+            "Time": str(dt_swe.time()),
         }
     )
     return jsonify("OK")
