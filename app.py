@@ -30,7 +30,6 @@ def inserting():
         {
             "Temperature": request.json["Temp"],
             "Humidity": request.json["Hum"],
-            # "Altitude": request.json["Alt"]
             "Pressure": request.json["Press"],
             "CO2": request.json["CO2"],
             "TVOC": request.json["TVOC"],
@@ -43,30 +42,15 @@ def inserting():
     return jsonify("OK")
 
 
-@app.route("/test", methods=["POST"])
-def testing():
-    date_init = datetime.datetime.utcnow()
-    date_subt = datetime.timedelta(hours=1)
-    date_ins = date_init + date_subt
-    coll.insert_one(
-        {
-            "Temp": request.json["temp"],
-            "Date": str(date_ins.date()),
-            "Time": str(date_ins.time()),
-        }
-    )
-    return jsonify("Response")
-
-
-@app.route("/find", methods=["GET"])
+@app.route("/measurements", methods=["GET"])
 def finding():
     date_ins = request.args["date"]
-    output = []
 
-    for joe in coll.find({"Date": date_ins}).sort("Date", -1):
-        output.append(joe)
-
-    return render_template("find.html", title="Sensor DB list", paragraph=output)
+    return render_template(
+        "find.html",
+        title="Mätvärden från " + date_ins,
+        coll=coll.find({"Date": date_ins}).sort("Date", -1),
+    )
 
 
 if __name__ == "__main__":

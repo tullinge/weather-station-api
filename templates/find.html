@@ -8,7 +8,14 @@
 
         <body>
             <h3>{{  title  }}</h3>
-            <p>{{  paragraph  }}</p>
+            <ul>
+                {% for list in coll %}
+                <li>
+                    {%if list %}
+                    {{list}}
+                </li>
+                {% endfor %}
+            </ul>
         </body>
 
 
