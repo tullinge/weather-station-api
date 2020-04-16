@@ -16,3 +16,4 @@ python app.py
 
 ## Contributers
 - Oskar Löf (JoeMamasXD) <Oskar.lof@skola.botkyrka.se>
+- Max Lundberg (Fajterman) <Max.lunberg@skola.botkyrka.se>
