@@ -4,17 +4,22 @@
 
     <body>
         <h3>Sensor DB Homepage</h3>
-        <p>Använd "http://{{ host_ip }}:69/measurements?date=yyyy-mm-dd" för att hitta
-            sensorvärden. <br>
+        <p>Use <bold style="font-style: italic"> http://{{ ip }}:69/measurements?date=yyyy-mm-dd" </bold>to find
+            sensor values.
 
-            Ex: http://{{ host_ip }}:69/measurements?date=2020-04-16
-            <br /><br />
-            Använd "http://{{ host_ip }}:69/measurements" med insomnia med exempel som:
+            <p> Example for todays measurements:
+                <bold style="font-style: italic;"> http://{{ ip }}:69/measurements?date={{date}}</bold>
+            </p>
+        </p>
+        <p>
+            Use <bold style="font-style: italic"> "http://{{ host_ip }}:69/measurements"</bold> with insomnia and post a
+            json text:
             { "Temp" : "24", "Hum" : "32", "Press" : "103409", "CO2" : "686", "TVOC" : "43", "Rain" :
-            "false", "Wind" : "0"} för att testa REST APIen
+            "false", "Wind" : "0"} as an example to test the REST API
             <br /><br />
-            (IP-adressen gäller om du är på samma nätverk annars använd: {{ ip }})</br>
-            (detta kräver dock att man öppnar en port)
+            (If the device is on the same network as the REST API <bold style="font-style: italic"> {{ host_ip }}
+            </bold> can be used
+
         </p>
 
     </body>

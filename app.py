@@ -7,8 +7,8 @@ import pytz
 
 
 Client = MongoClient("Localhost", 27017)
-db = Client["val"]
-coll = db["SensorData"]
+db = Client["SensorData"]
+coll = db["Values"]
 
 app = Flask(__name__)
 
@@ -17,7 +17,11 @@ app = Flask(__name__)
 def index():
     host_ip = socket.gethostbyname(socket.gethostname())
     network_ip = get("https://api.ipify.org").text
-    return render_template("index.html", host_ip=host_ip, ip=network_ip)
+    get_date = datetime.datetime.now(tz=pytz.timezone("Europe/Stockholm"))
+
+    return render_template(
+        "index.html", host_ip=host_ip, ip=network_ip, date=get_date.date()
+    )
 
 
 @app.route("/measurements", methods=["POST"])
@@ -44,12 +48,9 @@ def inserting():
 @app.route("/measurements", methods=["GET"])
 def finding():
     date_ins = request.args["date"]
+    collection = coll.find({"Date": date_ins}).sort("Date", -1)
 
-    return render_template(
-        "find.html",
-        title="Mätvärden från " + date_ins,
-        coll=coll.find({"Date": date_ins}).sort("Date", -1),
-    )
+    return render_template("find.html", coll=collection, date=date_ins,)
 
 
 if __name__ == "__main__":
