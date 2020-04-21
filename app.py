@@ -48,9 +48,22 @@ def inserting():
 @app.route("/measurements", methods=["GET"])
 def finding():
     date_ins = request.args["date"]
-    collection = coll.find({"Date": date_ins}).sort("Date", -1)
 
-    return render_template("find.html", coll=collection, date=date_ins,)
+    try_date = coll.count_documents({"Date": date_ins})
+    if try_date == 0:
+        get_date = str(
+            datetime.datetime.now(tz=pytz.timezone("Europe/Stockholm")).date()
+        )
+
+        return (
+            "<h3>No data found, measured data spreads across 2020-04-17 to "
+            + get_date
+            + " </h3>"
+        )
+
+    else:
+        collection = coll.find({"Date": date_ins}).sort("Time", -1)
+        return render_template("find.html", coll=collection, date=date_ins)
 
 
 if __name__ == "__main__":
