@@ -4,22 +4,24 @@
 
     <body>
         <h3>Sensor DB Homepage</h3>
-        <p>Use <bold style="font-style: italic"> http://{{ ip }}:69/measurements?date=yyyy-mm-dd" </bold>to find
-            sensor values.
-
-            <p> Example for todays measurements:
-                <bold style="font-style: italic;"> http://{{ ip }}:69/measurements?date={{date}}</bold>
-            </p>
+        <b>Latest sensor data:</b>
+        {% for list in newest %}
+        <p>
+            {{list}}
+        </p>
+        {% endfor %}
+        <b>Information:</b>
+        <p> Example for todays measurements:
+            <bold style="font-style: italic;"> http://92.35.103.221:69/measurements/user?date={{date}}</bold>
+        </p>
+        <p> Example for todays measurements (JSON):
+            <bold style="font-style: italic;"> http://92.35.103.221:69/measurements?date={{date}}</bold>
+        </p>
         </p>
         <p>
-            Use <bold style="font-style: italic"> "http://{{ host_ip }}:69/measurements"</bold> with insomnia and post a
-            json text:
+            Post example: <bold style="font-style: italic"> http://92.35.103.221:69/measurements</bold>
             { "Temp" : "24", "Hum" : "32", "Press" : "103409", "CO2" : "686", "TVOC" : "43", "Rain" :
-            "false", "Wind" : "0"} as an example to test the REST API
-            <br /><br />
-            (If the device is on the same network as the REST API <bold style="font-style: italic"> {{ host_ip }}
-            </bold> can be used
-
+            "false", "Wind" : "0"}
         </p>
 
     </body>

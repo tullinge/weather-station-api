@@ -1,8 +1,8 @@
 from flask import Flask, request, jsonify, render_template
 from pymongo import MongoClient
-from requests import get
+from bson.json_util import dumps
+import json
 import datetime
-import socket
 import pytz
 
 
@@ -15,13 +15,32 @@ app = Flask(__name__)
 
 @app.route("/")
 def index():
-    host_ip = socket.gethostbyname(socket.gethostname())
-    network_ip = get("https://api.ipify.org").text
-    get_date = datetime.datetime.now(tz=pytz.timezone("Europe/Stockholm"))
+    get_date = datetime.datetime.now(tz=pytz.timezone("Europe/Stockholm")).date()
+    newest_entry = coll.find({}).limit(1)
 
-    return render_template(
-        "index.html", host_ip=host_ip, ip=network_ip, date=get_date.date()
-    )
+    return render_template("index.html", date=get_date, newest=newest_entry,)
+
+
+@app.route("/testing", methods=["GET"])
+def testing():
+    x = request.authorization["username"]
+    y = request.authorization["password"]
+
+    if x == "Bruh" and y == "bru":
+
+        return jsonify("u don complet it")
+    else:
+        return jsonify("u don gofed!")
+
+
+@app.route("/measurements", methods=["GET"])
+def finding():
+    date_ins = request.args["date"]
+    collection = coll.find({"Date": date_ins}).sort("Time", -1)
+    response = []
+    for x in collection:
+        response.append(x)
+    return dumps(response)
 
 
 @app.route("/measurements", methods=["POST"])
@@ -45,25 +64,17 @@ def inserting():
     return jsonify("OK")
 
 
-@app.route("/measurements", methods=["GET"])
-def finding():
-    date_ins = request.args["date"]
+@app.route("/measurements/user", methods=["GET"])
+def user_finding():
 
+    date_ins = request.args["date"]
     try_date = coll.count_documents({"Date": date_ins})
     if try_date == 0:
-        get_date = str(
-            datetime.datetime.now(tz=pytz.timezone("Europe/Stockholm")).date()
-        )
-
-        return (
-            "<h3>No data found, measured data spreads across 2020-04-17 to "
-            + get_date
-            + " </h3>"
-        )
+        return "<h3>No data found</h3>"
 
     else:
         collection = coll.find({"Date": date_ins}).sort("Time", -1)
-        return render_template("find.html", coll=collection, date=date_ins)
+        return render_template("user.html", coll=collection, date=date_ins)
 
 
 if __name__ == "__main__":
