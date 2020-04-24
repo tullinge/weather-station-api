@@ -1,11 +1,9 @@
 from flask import Flask, request, jsonify, render_template
 from pymongo import MongoClient
 from bson.json_util import dumps
-
 from flask_jwt_extended import JWTManager
 from flask_jwt_extended import create_access_token
 from flask_bcrypt import Bcrypt
-
 import json
 import datetime
 import pytz
@@ -41,7 +39,7 @@ def login():
     response = coll_user.find_one({"username": username})
     if response:
         if bcrypt.check_password_hash(response["password"], password):
-            return ""
+            return "Login test successful"
 
         else:
             return jsonify("invalid password")
