@@ -1,6 +1,11 @@
 from flask import Flask, request, jsonify, render_template
 from pymongo import MongoClient
 from bson.json_util import dumps
+
+from flask_jwt_extended import JWTManager
+from flask_jwt_extended import create_access_token
+from flask_bcrypt import Bcrypt
+
 import json
 import datetime
 import pytz
@@ -10,32 +15,55 @@ Client = MongoClient("Localhost", 27017)
 db = Client["SensorData"]
 coll = db["Values"]
 
+db_user = Client["user"]
+coll_user = db_user["userdata"]
+
 app = Flask(__name__)
+bcrypt = Bcrypt(app)
 
 
 @app.route("/")
 def index():
-    get_date = datetime.datetime.now(tz=pytz.timezone("Europe/Stockholm")).date()
-    newest_entry = coll.find({}).limit(1)
+    get_date = str(datetime.datetime.now(tz=pytz.timezone("Europe/Stockholm")).date())
+    newest_entry = coll.find({"Date": "2020-04-24"}).sort("Time", -1).limit(1)
 
-    return render_template("index.html", date=get_date, newest=newest_entry,)
+    response = []
+    for x in newest_entry:
+        response.append(x)
+    return render_template("index.html", date=get_date, newest=dumps(response),)
 
 
-@app.route("/testing", methods=["GET"])
-def testing():
-    x = request.authorization["username"]
-    y = request.authorization["password"]
+@app.route("/user/login", methods=["POST"])
+def login():
+    username = request.authorization["username"]
+    password = request.authorization["password"]
 
-    if x == "Bruh" and y == "bru":
+    response = coll_user.find_one({"username": username})
+    if response:
+        if bcrypt.check_password_hash(response["password"], password):
+            return ""
 
-        return jsonify("u don complet it")
+        else:
+            return jsonify("invalid password")
     else:
-        return jsonify("u don gofed!")
+        return jsonify("invalid username")
+
+
+@app.route("/user/register", methods=["POST"])
+def testing():
+    username = request.authorization["username"]
+    password = bcrypt.generate_password_hash(request.authorization["password"]).decode(
+        "utf-8"
+    )
+    coll_user.insert_one({"username": username, "password": password})
+    return jsonify({"username": username, "passwordHash": password})
 
 
 @app.route("/measurements", methods=["GET"])
 def finding():
     date_ins = request.args["date"]
+    if not date_ins:
+        return jsonify("Need to add ?date=")
     collection = coll.find({"Date": date_ins}).sort("Time", -1)
     response = []
     for x in collection:
@@ -45,23 +73,35 @@ def finding():
 
 @app.route("/measurements", methods=["POST"])
 def inserting():
+    username = request.authorization["username"]
+    password = request.authorization["password"]
 
-    dt_swe = datetime.datetime.now(tz=pytz.timezone("Europe/Stockholm"))
+    if not any(username or password):
+        return jsonify("This function is protected")
 
-    coll.insert_one(
-        {
-            "Temperature": request.json["Temp"],
-            "Humidity": request.json["Hum"],
-            "Pressure": request.json["Press"],
-            "CO2": request.json["CO2"],
-            "TVOC": request.json["TVOC"],
-            "Rain": request.json["Rain"],
-            "Wind": request.json["Wind"],
-            "Date": str(dt_swe.date()),
-            "Time": str(dt_swe.time()),
-        }
-    )
-    return jsonify("OK")
+    response = coll_user.find_one({"username": username})
+
+    if response:
+        if bcrypt.check_password_hash(response["password"], password):
+            dt_swe = datetime.datetime.now(tz=pytz.timezone("Europe/Stockholm"))
+            coll.insert_one(
+                {
+                    "Temperature": request.json["Temp"],
+                    "Humidity": request.json["Hum"],
+                    "Pressure": request.json["Press"],
+                    "CO2": request.json["CO2"],
+                    "TVOC": request.json["TVOC"],
+                    "Rain": request.json["Rain"],
+                    "Wind": request.json["Wind"],
+                    "Date": str(dt_swe.date()),
+                    "Time": str(dt_swe.time()),
+                }
+            )
+            return jsonify("Test data sent!")
+        else:
+            return jsonify("invalid username or password")
+    else:
+        return jsonify("invalid username or password")
 
 
 @app.route("/measurements/user", methods=["GET"])

@@ -4,20 +4,17 @@
 
     <body>
         <h3>Sensor DB Homepage</h3>
-        <b>Latest sensor data:</b>
-        {% for list in newest %}
-        <p>
-            {{list}}
-        </p>
-        {% endfor %}
-        <b>Information:</b>
+
+        <b>Todays latest measure from weather station:</b>
+        <p>{{ newest }}</p>
+        <b>Information: (W.I.P)</b>
         <p> Example for todays measurements:
             <bold style="font-style: italic;"> http://92.35.103.221:69/measurements/user?date={{date}}</bold>
         </p>
         <p> Example for todays measurements (JSON):
             <bold style="font-style: italic;"> http://92.35.103.221:69/measurements?date={{date}}</bold>
         </p>
-        </p>
+
         <p>
             Post example: <bold style="font-style: italic"> http://92.35.103.221:69/measurements</bold>
             { "Temp" : "24", "Hum" : "32", "Press" : "103409", "CO2" : "686", "TVOC" : "43", "Rain" :
