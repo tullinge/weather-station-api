@@ -9,7 +9,7 @@ import datetime
 import pytz
 
 
-Client = MongoClient("Localhost", 27017)
+Client = MongoClient("mongodb://db:27017/dockerdb")
 db = Client["SensorData"]
 coll = db["Values"]
 
@@ -20,10 +20,15 @@ app = Flask(__name__)
 bcrypt = Bcrypt(app)
 
 
-@app.route("/")
+@app.route("/bruh", methods=["GET"])
+def bruh():
+    return "bruh"
+
+
+@app.route("/", methods=["GET"])
 def index():
     get_date = str(datetime.datetime.now(tz=pytz.timezone("Europe/Stockholm")).date())
-    newest_entry = coll.find({"Date": "2020-04-24"}).sort("Time", -1).limit(1)
+    newest_entry = coll.find({"Date": get_date}).sort("Time", -1).limit(1)
 
     response = []
     for x in newest_entry:

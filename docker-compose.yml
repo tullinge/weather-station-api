@@ -1,11 +1,11 @@
-services:
-
-  web:
-    image: mongo
-    restart: always
-    environment: 
-        MONGO_INITDB_ROOT_USERNAME: root
-        MONGO_INITDB_ROOT_PASSWORD: stuff
-    
-        
-
+app:
+  build: .
+  command: python -u app.py
+  ports:
+    - "69:69"
+  links:
+    - db
+db:
+  image: mongo:4.0.4
+  ports: 
+    - "27017:27017"
