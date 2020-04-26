@@ -1,19 +1,17 @@
 # Weather Station API
 ## Requirements
 
-- Python3
-- VS Code
-- Libraries needed for the weather station API is found in requirements.txt 
-```
-pip install -r requirements.txt
-```
+- Docker & Docker-Compose
+- Python 3.7
+- Required libraries (requirements.txt)
+
+
 
 ## Instructions
-To use the API you simply locate the installation folder and execute the weather station API script with a terminal (linux) or powershell (windows):
+Locate the installation folder and execute docker command:
 ```
-python app.py
+docker-compose up
 ```
-
 ## Contributers
 - Oskar Löf (JoeMamasXD) <Oskar.lof@skola.botkyrka.se>
 - Max Lundberg (Fajterman) <Max.lunberg@skola.botkyrka.se>
