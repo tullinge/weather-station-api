@@ -9,7 +9,7 @@ import datetime
 import pytz
 
 
-Client = MongoClient("mongodb://db:27017/dockerdb")
+Client = MongoClient("mongodb://db:27017")
 db = Client["SensorData"]
 coll = db["Values"]
 
@@ -20,7 +20,7 @@ app = Flask(__name__)
 bcrypt = Bcrypt(app)
 
 
-@app.route("/bruh", methods=["GET"])
+@app.route("/bruhnch", methods=["GET"])
 def bruh():
     return "bruh"
 
@@ -96,8 +96,8 @@ def inserting():
                     "TVOC": request.json["TVOC"],
                     "Rain": request.json["Rain"],
                     "Wind": request.json["Wind"],
-                    "Date": str(dt_swe.date()),
-                    "Time": str(dt_swe.time()),
+                    "Date": "2020-04-27",
+                    "Time": str(dt_swe.time()),  # XD lam
                 }
             )
             return jsonify("Test data sent!")

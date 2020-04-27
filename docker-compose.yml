@@ -1,11 +1,13 @@
-app:
+web:
   build: .
-  command: python -u app.py
   ports:
     - "69:69"
+  command: python -u app.py
   links:
     - db
+
 db:
-  image: mongo:4.0.4
+  image: mongo:latest
   ports: 
     - "27017:27017"
+
