@@ -1,13 +1,35 @@
-web:
-  build: .
-  ports:
-    - "69:69"
-  command: python -u app.py
-  links:
-    - db
+version: "3"
 
-db:
-  image: mongo:latest
-  ports: 
-    - "27017:27017"
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "69:69"
+    networks:
+      - mynet
+    container_name: Weather-Station-API
+    volumes:
+      - .:/app
+    command: python -u app.py
+    links:
+      - db
+    
+  db:
+    image: mongo:latest
+    container_name: "Weather-Station-DB"
+    
+    ports:
+      - "27017:27017"
+    networks:
+      - mynet
+    volumes:
+      - wsdb_data:/data/db
 
+networks:
+  mynet:
+
+volumes:
+  wsdb_data:
+    
