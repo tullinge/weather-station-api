@@ -6,7 +6,7 @@ import json
 import datetime
 import pytz
 
-uri = "mongodb://db:27017"
+uri = "mongodb://user:password@db:27017/"
 Client = MongoClient(uri)
 db = Client["SensorData"]
 coll = db["Values"]
@@ -37,6 +37,7 @@ def index():
 
 @app.route("/user/login", methods=["POST"])
 def login():
+
     username = request.authorization["username"]
     password = request.authorization["password"]
 
@@ -53,12 +54,34 @@ def login():
 
 @app.route("/user/register", methods=["POST"])
 def testing():
-    username = request.authorization["username"]
-    password = bcrypt.generate_password_hash(request.authorization["password"]).decode(
-        "utf-8"
-    )
-    coll_user.insert_one({"username": username, "password": password})
-    return jsonify({"username": username, "passwordHash": password})
+    check_user = coll_user.count_documents({})
+
+    username_ = request.json["username"]
+    password_ = bcrypt.generate_password_hash(request.json["password"]).decode("utf-8")
+
+    if check_user > 0:
+        authUsername = request.authorization["username"]
+        authPassword = request.authorization["password"]
+
+        if not any(authUsername or authPassword):
+            return jsonify("This function is protected")
+
+        response = coll_user.find_one({"username": authUsername})
+
+        if response:
+            if bcrypt.check_password_hash(response["password"], authPassword):
+                coll_user.insert_one({"username": username_, "password": password_})
+                return jsonify(username_ + " added")
+            else:
+                return jsonify("Wrong password or username")
+
+    else:
+        coll_user.insert_one({"username": username_, "password": password_})
+        return jsonify(
+            "This is the first user and needs no authorization to create: "
+            + username_
+            + " added"
+        )
 
 
 @app.route("/measurements", methods=["GET"])
