@@ -5,21 +5,26 @@
     <body>
         <h3>Sensor DB Homepage</h3>
 
-        <b>Todays latest measure from weather station:</b>
-        <p>{{ newest }}</p>
-        <b>Information: (W.I.P)</b>
-        <p> Example for todays measurements:
-            <bold style="font-style: italic;"> http://92.35.103.221:69/measurements/user?date={{date}}</bold>
-        </p>
-        <p> Example for todays measurements (JSON):
-            <bold style="font-style: italic;"> http://92.35.103.221:69/measurements?date={{date}}</bold>
-        </p>
-
+        <b>Today's latest measure from weather station:</b>
         <p>
-            Post example: <bold style="font-style: italic"> http://92.35.103.221:69/measurements</bold>
-            {"Temp" : "24", "Hum" : "32", "Press" : "103409", "CO2" : "686", "TVOC" : "43", "Rain" :
-            "false", "Wind" : "0"}
+            {{ newest }}
         </p>
+        <b>Information</b>
+        <p>
+            <p><b>Units for: </b>Temperature = celsius, Humidity = percent, Pressure = pascal, CO2 = parts per
+                billon, TVOC = parts per billon, Rain = true or false, Wind = m/s</p>
+
+            For all of today's measurements in a easy to view list <a href="/user/measurements?date={{date}}">click
+                here</a>
+        </p>
+        <p>
+            For GET request in json: <a href="/measurements?date={{date}}">click here</a>
+
+            <p>
+                POST example: {"Temp" : "24", "Hum" : "32", "Press" : "103409", "CO2" : "686", "TVOC" : "43", "Rain" :
+                "false", "Wind" : "0"} {{date}}
+            </p>
+
 
     </body>
 
