@@ -16,5 +16,5 @@ docker-compose up
 ```
 
 ## Contributers
-- Oskar Löf (JoeMamasXD) <Oskar.lof@skola.botkyrka.se>
-- Max Lundberg (Fajterman) <Max.lunberg@skola.botkyrka.se>
+- Oskar Löf (JoeMamasXD) <oskar.lof@skola.botkyrka.se>
+- Max Lundberg (Fajterman) <max.lundberg@skola.botkyrka.se>
