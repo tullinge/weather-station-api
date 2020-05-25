@@ -59,29 +59,35 @@ def testing():
     username_ = request.json["username"]
     password_ = bcrypt.generate_password_hash(request.json["password"]).decode("utf-8")
 
-    if check_user > 0:
-        authUsername = request.authorization["username"]
-        authPassword = request.authorization["password"]
+    try:
+        if check_user > 0:
+            authUsername = request.authorization["username"]
+            authPassword = request.authorization["password"]
 
-        if not any(authUsername or authPassword):
-            return jsonify("This function is protected")
+            if not any(authUsername and authPassword):
+                return jsonify("Missing Username or Password"), 403
 
-        response = coll_user.find_one({"username": authUsername})
+            response = coll_user.find_one({"username": authUsername})
 
-        if response:
-            if bcrypt.check_password_hash(response["password"], authPassword):
-                coll_user.insert_one({"username": username_, "password": password_})
-                return jsonify(username_ + " added")
+            if response:
+                if bcrypt.check_password_hash(response["password"], authPassword):
+                    if coll_user.count_documents({"username": username_}) == 1:
+                        return jsonify("Username already taken"), 409
+                    coll_user.insert_one({"username": username_, "password": password_})
+
+                    return jsonify(username_ + " added")
             else:
-                return jsonify("Wrong password or username")
+                return jsonify("Wrong password or username"), 403
 
-    else:
-        coll_user.insert_one({"username": username_, "password": password_})
-        return jsonify(
-            "This is the first user and needs no authorization to create: "
-            + username_
-            + " added"
-        )
+        else:
+            coll_user.insert_one({"username": username_, "password": password_})
+            return jsonify(
+                "This is the first user and needs no authorization to create: "
+                + username_
+                + " added"
+            )
+    except:
+        return jsonify("Missing authentication"), 401
 
 
 @app.route("/measurements", methods=["GET"])
@@ -102,7 +108,7 @@ def inserting():
     password = request.authorization["password"]
 
     if not any(username or password):
-        return jsonify("This function is protected")
+        return jsonify("This function is protected"), 403
 
     response = coll_user.find_one({"username": username})
 
@@ -140,6 +146,16 @@ def user_finding():
     else:
         collection = coll.find({"Date": date_ins}).sort("Time", -1)
         return render_template("user.html", coll=collection, date=date_ins)
+
+
+@app.errorhandler(404)
+def page_not_found(e):
+    return "404, Page not found", 404
+
+
+@app.errorhandler(400)
+def bad_request(e):
+    return "400, bad request", 400
 
 
 if __name__ == "__main__":
